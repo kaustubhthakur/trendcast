@@ -1,6 +1,8 @@
 const express = require('express')
 require('dotenv').config();
 const authrouter = require('./routes/auth')
+const userrouter = require('./routes/users')
+
 const cors = require('cors')
 const pool = require('./db')
 const PORT = 8081;
@@ -18,4 +20,5 @@ app.use(express.json());
 app.use(cors());
 
 app.use('/auth',authrouter);
+app.use('/user',userrouter)
 app.listen(PORT, () => { console.log(`server is running on port ${PORT}...`) })   
