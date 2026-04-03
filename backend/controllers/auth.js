@@ -4,9 +4,9 @@ const User = require("../models/User")
 
 const register = async (req, res) => {
   try {
-    const { username, email, password } = req.body;
-    const existingEmail = await userModel.findUserByEmail(email);
-    const existingUsername = await userModel.findUserByUsername(username);
+   const { username, email, password } = req.body;
+    const existingEmail = await User.findUserByEmail(email);     
+    const existingUsername = await User.findUserByUsername(username);
 
     if (existingEmail) {
       return res.status(400).json({ error: "Email already exists" });
@@ -16,15 +16,19 @@ const register = async (req, res) => {
       return res.status(400).json({ error: "Username already taken" });
     }
 
-    const hashed = await bcrypt.hash(password, 10);
+    // Hash password
+    const salt = bcrypt.genSaltSync(10);
+    const hash = bcrypt.hashSync(password, salt);
 
-    const user = await User.createUser(
+    // Create user
+    const newUser = await User.createUser({ 
       username,
       email,
-      hashed
-    );
+      password: hash,
+    });
 
-    res.json(user);
+    res.status(201).json({ message: "User has been created", user: newUser });
+
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -34,7 +38,7 @@ const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const user = await userModel.findUserByEmail(email);
+    const user = await User.findUserByEmail(email);
 
     if (!user) {
       return res.status(400).json({ error: "User not found" });
@@ -52,7 +56,7 @@ const login = async (req, res) => {
       { expiresIn: "7d" }
     );
 
-    res.json({ token });
+    res.json({message:"user has been logged in"});
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
