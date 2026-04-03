@@ -7,7 +7,6 @@ const register = async (req, res) => {
    const { username, email, password } = req.body;
     const existingEmail = await User.findUserByEmail(email);     
     const existingUsername = await User.findUserByUsername(username);
-
     if (existingEmail) {
       return res.status(400).json({ error: "Email already exists" });
     }
@@ -15,12 +14,8 @@ const register = async (req, res) => {
     if (existingUsername) {
       return res.status(400).json({ error: "Username already taken" });
     }
-
-    // Hash password
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(password, salt);
-
-    // Create user
     const newUser = await User.createUser({ 
       username,
       email,
@@ -41,24 +36,39 @@ const login = async (req, res) => {
     const user = await User.findUserByEmail(email);
 
     if (!user) {
-      return res.status(400).json({ error: "User not found" });
+      return res.status(400).json({ error: "Invalid email or password" });
     }
 
     const valid = await bcrypt.compare(password, user.password);
 
     if (!valid) {
-      return res.status(401).json({ error: "Invalid password" });
+      return res.status(400).json({ error: "Invalid email or password" });
     }
 
     const token = jwt.sign(
-      { id: user.id },
+      { id: user.id, isAdmin: user.isAdmin || false },
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
 
-    res.json({message:"user has been logged in"});
+    const { password: _, ...userData } = user;
+
+    res
+      .cookie("access_token", token, {
+        httpOnly: true,
+        secure: true,      
+        sameSite: "strict", 
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      })
+      .status(200)
+      .json({
+        message: "Logged in successfully",
+        user: userData,
+      });
+
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
+
 module.exports = {register,login}
