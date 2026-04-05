@@ -2,20 +2,62 @@ import pandas as pd
 import requests
 from sklearn.linear_model import LogisticRegression
 
-# ==============================
-# LOAD DATA + TRAIN MODEL
-# ==============================
 df = pd.read_csv("features.csv")
 
-X = df[["home_avg_goals", "away_avg_goals", "goal_diff"]]
-y = df["result"]
+
+def get_team_stats(team):
+    home_matches = df[df["HomeTeam"] == team]
+    away_matches = df[df["AwayTeam"] == team]
+
+    total_matches = len(home_matches) + len(away_matches)
+    if total_matches == 0:
+        return None
+
+    home_wins = (home_matches["result"] == 0).sum()
+    away_wins = (away_matches["result"] == 2).sum()
+    wins = home_wins + away_wins
+
+    win_rate = wins / total_matches
+
+    home_goals = home_matches["home_avg_goals"].mean()
+    away_goals = away_matches["away_avg_goals"].mean()
+
+    avg_goals = (home_goals + away_goals) / 2
+
+    return win_rate, avg_goals
+
+features = []
+labels = []
+
+teams = pd.concat([df["HomeTeam"], df["AwayTeam"]]).unique()
+
+for _, row in df.iterrows():
+    home = row["HomeTeam"]
+    away = row["AwayTeam"]
+
+    home_stats = get_team_stats(home)
+    away_stats = get_team_stats(away)
+
+    if home_stats is None or away_stats is None:
+        continue
+
+    home_win, home_goals = home_stats
+    away_win, away_goals = away_stats
+
+    features.append([home_win, away_win, home_goals, away_goals])
+    labels.append(row["result"])
+
+X = pd.DataFrame(features, columns=[
+    "home_win_rate", "away_win_rate",
+    "home_avg_goals", "away_avg_goals"
+])
+
+y = labels
 
 model = LogisticRegression(max_iter=1000)
 model.fit(X, y)
 
-# ==============================
-# TEAM NAME MAPPING (IMPORTANT)
-# ==============================
+
 team_map = {
     "Manchester City FC": "Man City",
     "Arsenal FC": "Arsenal",
@@ -39,24 +81,24 @@ team_map = {
     "Sunderland AFC": "Sunderland"
 }
 
-def predict_match(home_team, away_team):
-    home_df = df[df["HomeTeam"] == home_team]
-    away_df = df[df["AwayTeam"] == away_team]
 
-    if home_df.empty or away_df.empty:
-        print(f"Skipping {home_team} vs {away_team} (data not found)")
+def predict_match(home_team, away_team):
+    home_stats = get_team_stats(home_team)
+    away_stats = get_team_stats(away_team)
+
+    if home_stats is None or away_stats is None:
+        print(f"Skipping {home_team} vs {away_team}")
         return
 
-    home_data = home_df.iloc[-1]
-    away_data = away_df.iloc[-1]
-
-    home_avg = home_data["home_avg_goals"]
-    away_avg = away_data["away_avg_goals"]
-    goal_diff = home_avg - away_avg
+    home_win, home_goals = home_stats
+    away_win, away_goals = away_stats
 
     sample = pd.DataFrame(
-        [[home_avg, away_avg, goal_diff]],
-        columns=["home_avg_goals", "away_avg_goals", "goal_diff"]
+        [[home_win, away_win, home_goals, away_goals]],
+        columns=[
+            "home_win_rate", "away_win_rate",
+            "home_avg_goals", "away_avg_goals"
+        ]
     )
 
     probs = model.predict_proba(sample)[0]
@@ -69,29 +111,18 @@ def predict_match(home_team, away_team):
     outcome = ["Home Win", "Draw", "Away Win"]
     print("Prediction:", outcome[probs.argmax()])
 
-
-API_KEY = "Api key"
+API_KEY = "API TOKEN"
 
 url = "https://api.football-data.org/v4/competitions/PL/matches?status=SCHEDULED"
 
-headers = {
-    "X-Auth-Token": API_KEY
-}
+headers = {"X-Auth-Token": API_KEY}
+data = requests.get(url, headers=headers).json()
 
-response = requests.get(url, headers=headers)
-data = response.json()
 
-# ==============================
-# RUN PREDICTIONS ON REAL MATCHES
-# ==============================
-print("\n🔥 Upcoming Match Predictions 🔥")
+print("\n🔥 Improved Predictions 🔥")
 
 for m in data.get("matches", [])[:10]:
-    home = m["homeTeam"]["name"]
-    away = m["awayTeam"]["name"]
-
-    # map API names to dataset names
-    home = team_map.get(home, home)
-    away = team_map.get(away, away)
+    home = team_map.get(m["homeTeam"]["name"], m["homeTeam"]["name"])
+    away = team_map.get(m["awayTeam"]["name"], m["awayTeam"]["name"])
 
     predict_match(home, away)
