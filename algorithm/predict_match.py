@@ -4,7 +4,7 @@ from sklearn.linear_model import LogisticRegression, Ridge
 from sklearn.preprocessing import StandardScaler
 import numpy as np
 
-df = pd.read_csv("features.csv")
+df = pd.read_csv("algorithm/features.csv")
 
 _team_stats_cache = {}
 
@@ -58,8 +58,8 @@ for _, row in df.iterrows():
         home_win, away_win,
         home_goals_scored, away_goals_scored,
         home_goals_conceded, away_goals_conceded,
-        home_goals_scored - away_goals_conceded,  
-        away_goals_scored - home_goals_conceded, 
+        home_goals_scored - away_goals_conceded,
+        away_goals_scored - home_goals_conceded,
     ])
     labels.append(row["result"])
 
@@ -134,11 +134,15 @@ def predict_match(home_team, away_team):
 
     probs = outcome_model.predict_proba(sample_scaled)[0]
 
-    pred_home_goals = max(0.0, home_goals_model.predict(sample_scaled)[0])
-    pred_away_goals = max(0.0, away_goals_model.predict(sample_scaled)[0])
+    pred_home_goals = max(0, round(home_goals_model.predict(sample_scaled)[0]))
+    pred_away_goals = max(0, round(away_goals_model.predict(sample_scaled)[0]))
 
-    outcome_labels = ["Home Win", "Draw", "Away Win"]
-    predicted_outcome = outcome_labels[np.argmax(probs)]
+    if pred_home_goals > pred_away_goals:
+        predicted_outcome = f"🏆 {home_team} Win"
+    elif pred_away_goals > pred_home_goals:
+        predicted_outcome = f"🏆 {away_team} Win"
+    else:
+        predicted_outcome = "🤝 Draw"
 
     bar = "─" * 42
     print(f"\n┌{bar}┐")
@@ -148,11 +152,11 @@ def predict_match(home_team, away_team):
     print(f"│  🤝 Draw          :  {probs[1]*100:5.1f}%{' '*16}│")
     print(f"│  ✈️  {away_team} Win :  {probs[2]*100:5.1f}%{' '*15}│")
     print(f"├{bar}┤")
-    print(f"│  🎯 Predicted Score :  {pred_home_goals:.1f}  –  {pred_away_goals:.1f}{' '*12}│")
+    print(f"│  🎯 Predicted Score :  {pred_home_goals}  –  {pred_away_goals}{' '*14}│")
     print(f"│  📊 Prediction      :  {predicted_outcome:<20}│")
     print(f"└{bar}┘")
 
-API_KEY = "Token"
+API_KEY = "token"
 url = "https://api.football-data.org/v4/competitions/PL/matches?status=SCHEDULED"
 headers = {"X-Auth-Token": API_KEY}
 
