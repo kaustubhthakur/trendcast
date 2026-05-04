@@ -156,7 +156,7 @@ def predict_match(home_team, away_team):
     print(f"│  📊 Prediction      :  {predicted_outcome:<20}│")
     print(f"└{bar}┘")
 
-API_KEY = "token"
+API_KEY = "67884d988e9d44d7bd87977e71126399"
 url = "https://api.football-data.org/v4/competitions/PL/matches?status=SCHEDULED"
 headers = {"X-Auth-Token": API_KEY}
 

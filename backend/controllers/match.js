@@ -1,18 +1,12 @@
 const MatchModel = require('../models/Match')
-
+const  { runPrediction } = require("../services/mlServices");
  const createMatch = async (req, res) => {
   try {
-    const {
+      const {
       teamAName,
       teamALogo,
       teamBName,
       teamBLogo,
-      teamAWinProb,
-      drawProb,
-      teamBWinProb,
-      predictedResult,
-      teamAGoals,
-      teamBGoals,
       matchTime
     } = req.body;
 
@@ -22,21 +16,32 @@ const MatchModel = require('../models/Match')
       });
     }
 
-    if (
-      teamAWinProb == null ||
-      drawProb == null ||
-      teamBWinProb == null
-    ) {
+    // 🔥 CALL PYTHON
+    const prediction = await runPrediction(teamAName, teamBName);
+
+    if (prediction.error) {
       return res.status(400).json({
-        error: "Prediction probabilities are required"
+        error: prediction.error
       });
     }
-    const totalProb = teamAWinProb + drawProb + teamBWinProb;
-    if (Math.abs(totalProb - 100) > 1) {
-      return res.status(400).json({
-        error: "Probabilities should sum close to 100"
-      });
-    }
+
+   const {
+  teamAWinProb,
+  drawProb,
+  teamBWinProb
+} = prediction;
+
+// ✅ convert float → int HERE
+const teamAGoals = Math.round(Number(prediction.teamAGoals));
+const teamBGoals = Math.round(Number(prediction.teamBGoals));
+
+    // ✅ Decide result
+   const predictedResult =
+  teamAGoals > teamBGoals
+    ? "TEAM_A"
+    : teamBGoals > teamAGoals
+    ? "TEAM_B"
+    : "DRAW";
 
     const match = await MatchModel.CreateMatch({
       teamAName,
