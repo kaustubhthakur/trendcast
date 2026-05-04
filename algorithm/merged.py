@@ -33,14 +33,11 @@ def main():
         df = load_and_clean(path, file)
         all_dfs.append(df)
 
-    # merge all data
     combined = pd.concat(all_dfs, ignore_index=True)
 
-    # sort by date (important for ML later)
     combined["Date"] = pd.to_datetime(combined["Date"], dayfirst=True, errors="coerce")
     combined = combined.sort_values(by="Date")
 
-    # save final dataset
     combined.to_csv("combined.csv", index=False)
 
     print("\n✅ Merged successfully → combined.csv")
