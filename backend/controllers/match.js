@@ -1,8 +1,8 @@
 const MatchModel = require('../models/Match')
 const  { runPrediction } = require("../services/mlServices");
- const createMatch = async (req, res) => {
+const createMatch = async (req, res) => {
   try {
-      const {
+    const {
       teamAName,
       teamALogo,
       teamBName,
@@ -16,6 +16,16 @@ const  { runPrediction } = require("../services/mlServices");
       });
     }
 
+    // ✅ Prevent same teams
+    if (
+      teamAName.trim().toLowerCase() ===
+      teamBName.trim().toLowerCase()
+    ) {
+      return res.status(400).json({
+        error: "Both teams cannot be the same"
+      });
+    }
+
     // 🔥 CALL PYTHON
     const prediction = await runPrediction(teamAName, teamBName);
 
@@ -25,23 +35,21 @@ const  { runPrediction } = require("../services/mlServices");
       });
     }
 
-   const {
-  teamAWinProb,
-  drawProb,
-  teamBWinProb
-} = prediction;
+    const {
+      teamAWinProb,
+      drawProb,
+      teamBWinProb
+    } = prediction;
 
-// ✅ convert float → int HERE
-const teamAGoals = Math.round(Number(prediction.teamAGoals));
-const teamBGoals = Math.round(Number(prediction.teamBGoals));
+    const teamAGoals = Math.round(Number(prediction.teamAGoals));
+    const teamBGoals = Math.round(Number(prediction.teamBGoals));
 
-    // ✅ Decide result
-   const predictedResult =
-  teamAGoals > teamBGoals
-    ? "TEAM_A"
-    : teamBGoals > teamAGoals
-    ? "TEAM_B"
-    : "DRAW";
+    const predictedResult =
+      teamAGoals > teamBGoals
+        ? "TEAM_A"
+        : teamBGoals > teamAGoals
+        ? "TEAM_B"
+        : "DRAW";
 
     const match = await MatchModel.CreateMatch({
       teamAName,
@@ -64,6 +72,7 @@ const teamBGoals = Math.round(Number(prediction.teamBGoals));
 
   } catch (err) {
     console.error(err);
+
     return res.status(500).json({
       error: "Internal server error"
     });

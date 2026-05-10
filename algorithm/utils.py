@@ -1,45 +1,137 @@
-# algorithm/utils.py
-
 import pandas as pd
-
 import os
+import numpy as np
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-csv_path = os.path.join(BASE_DIR, "features.csv")
 
-df = pd.read_csv(csv_path)
+df = pd.read_csv(
+    os.path.join(BASE_DIR, "features.csv")
+)
 
-_team_stats_cache = {}
+LEAGUE_HOME_GOALS = df["FTHG"].mean()
+LEAGUE_AWAY_GOALS = df["FTAG"].mean()
 
-FEATURE_COLS = [
-    "home_win_rate", "away_win_rate",
-    "home_avg_goals_scored", "away_avg_goals_scored",
-    "home_avg_goals_conceded", "away_avg_goals_conceded",
-    "home_attack_edge", "away_attack_edge"
-]
 
-def get_team_stats(team):
-    if team in _team_stats_cache:
-        return _team_stats_cache[team]
+def weighted_average(values):
 
-    home_matches = df[df["HomeTeam"] == team]
-    away_matches = df[df["AwayTeam"] == team]
+    weights = np.arange(1, len(values) + 1)
 
-    total = len(home_matches) + len(away_matches)
-    if total == 0:
+    return np.average(values, weights=weights)
+
+
+def get_team_stats(team, last_n=12):
+
+    home_matches = (
+        df[df["HomeTeam"] == team]
+        .tail(last_n)
+    )
+
+    away_matches = (
+        df[df["AwayTeam"] == team]
+        .tail(last_n)
+    )
+
+    if len(home_matches) < 5 or len(away_matches) < 5:
         return None
 
-    wins = (home_matches["result"] == 0).sum() + \
-           (away_matches["result"] == 2).sum()
+    h_scored = weighted_average(
+        home_matches["FTHG"]
+    )
 
-    win_rate = wins / total
+    h_conceded = weighted_average(
+        home_matches["FTAG"]
+    )
 
-    scored = (home_matches["home_avg_goals"].mean() +
-              away_matches["away_avg_goals"].mean()) / 2
+    a_scored = weighted_average(
+        away_matches["FTAG"]
+    )
 
-    conceded = (home_matches["away_avg_goals"].mean() +
-                away_matches["home_avg_goals"].mean()) / 2
+    a_conceded = weighted_average(
+        away_matches["FTHG"]
+    )
 
-    result = (win_rate, scored, conceded)
-    _team_stats_cache[team] = result
-    return result
+    home_attack = (
+        h_scored / LEAGUE_HOME_GOALS
+    )
+
+    away_attack = (
+        a_scored / LEAGUE_AWAY_GOALS
+    )
+
+    home_defense = (
+        h_conceded / LEAGUE_AWAY_GOALS
+    )
+
+    away_defense = (
+        a_conceded / LEAGUE_HOME_GOALS
+    )
+
+    home_clean_sheets = (
+        (home_matches["FTAG"] == 0)
+        .mean()
+    )
+
+    away_clean_sheets = (
+        (away_matches["FTHG"] == 0)
+        .mean()
+    )
+
+    home_big_scoring = (
+        (home_matches["FTHG"] >= 3)
+        .mean()
+    )
+
+    away_big_scoring = (
+        (away_matches["FTAG"] >= 3)
+        .mean()
+    )
+
+    recent_matches = pd.concat([
+        home_matches,
+        away_matches
+    ]).tail(5)
+
+    points = 0
+
+    for _, row in recent_matches.iterrows():
+
+        if row["HomeTeam"] == team:
+
+            if row["FTHG"] > row["FTAG"]:
+                points += 3
+
+            elif row["FTHG"] == row["FTAG"]:
+                points += 1
+
+        else:
+
+            if row["FTAG"] > row["FTHG"]:
+                points += 3
+
+            elif row["FTAG"] == row["FTHG"]:
+                points += 1
+
+    form = points / 15
+
+    return {
+
+        "home_attack": home_attack,
+        "away_attack": away_attack,
+
+        "home_defense": home_defense,
+        "away_defense": away_defense,
+
+        "home_clean_sheets":
+            home_clean_sheets,
+
+        "away_clean_sheets":
+            away_clean_sheets,
+
+        "home_big_scoring":
+            home_big_scoring,
+
+        "away_big_scoring":
+            away_big_scoring,
+
+        "form": form
+    }
