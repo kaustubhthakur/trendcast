@@ -1,4 +1,3 @@
-import pandas as pd
 import numpy as np
 import sys
 import json
@@ -7,52 +6,103 @@ from scipy.stats import poisson
 from utils import (
     get_team_stats,
     LEAGUE_HOME_GOALS,
-    LEAGUE_AWAY_GOALS
+    LEAGUE_AWAY_GOALS,
 )
 
 MAX_GOALS = 15
 
+RHO = -0.13
 
-def poisson_matrix(home_xg, away_xg):
 
-    matrix = np.zeros((MAX_GOALS + 1, MAX_GOALS + 1))
 
+def _dc_tau(i, j, mu, nu):
+    if   i == 0 and j == 0: return 1.0 - mu * nu * RHO
+    elif i == 1 and j == 0: return 1.0 + nu * RHO
+    elif i == 0 and j == 1: return 1.0 + mu * RHO
+    elif i == 1 and j == 1: return 1.0 - RHO
+    return 1.0
+
+
+
+def score_matrix(home_xg, away_xg):
+    mat = np.zeros((MAX_GOALS + 1, MAX_GOALS + 1))
     for i in range(MAX_GOALS + 1):
         for j in range(MAX_GOALS + 1):
-
-            matrix[i][j] = (
+            mat[i, j] = (
                 poisson.pmf(i, home_xg)
                 * poisson.pmf(j, away_xg)
+                * _dc_tau(i, j, home_xg, away_xg)
             )
+    mat /= mat.sum()
+    return mat
 
-    return matrix
+def compute_xg(home_stats, away_stats):
 
-
-def top_scorelines(matrix, top_n=5):
-
-    scores = []
-
-    for i in range(MAX_GOALS + 1):
-        for j in range(MAX_GOALS + 1):
-
-            scores.append({
-                "score": f"{i}-{j}",
-                "probability": matrix[i][j]
-            })
-
-    scores = sorted(
-        scores,
-        key=lambda x: x["probability"],
-        reverse=True
+    home_xg = (
+        home_stats["home_attack"]
+        * away_stats["away_defense"]
+        * LEAGUE_HOME_GOALS
+    )
+    away_xg = (
+        away_stats["away_attack"]
+        * home_stats["home_defense"]
+        * LEAGUE_AWAY_GOALS
     )
 
+    home_xg *= 0.92 + home_stats["form"] * 0.16
+    away_xg *= 0.92 + away_stats["form"] * 0.16
+
+    home_xg *= 1.06
+
+    home_xg = max(0.50, min(home_xg, 2.8))
+    away_xg = max(0.40, min(away_xg, 2.5))
+
+    return round(home_xg, 3), round(away_xg, 3)
+
+
+def outcome_probs(mat):
+    n = mat.shape[0]
+    home_win = sum(mat[i, j] for i in range(n) for j in range(n) if i > j)
+    draw     = sum(mat[i, i] for i in range(n))
+    away_win = sum(mat[i, j] for i in range(n) for j in range(n) if j > i)
+    total    = home_win + draw + away_win
+    return (
+        round((home_win / total) * 100, 2),
+        round((draw     / total) * 100, 2),
+        round((away_win / total) * 100, 2),
+    )
+
+
+def predicted_score(mat, home_xg, away_xg):
+    n        = mat.shape[0]
+    best_val  = -1
+    best_cell = (1, 0)
+    xg_ratio  = np.log(home_xg / away_xg)  # negative if away stronger
+
+    for i in range(n):
+        for j in range(n):
+            score_ratio = np.log((i + 0.5) / (j + 0.5))
+            consistency = np.exp(-0.8 * (score_ratio - xg_ratio) ** 2)
+            val = mat[i, j] * consistency
+            if val > best_val:
+                best_val  = val
+                best_cell = (i, j)
+
+    return best_cell
+
+
+def top_scorelines(mat, top_n=5):
+    n      = mat.shape[0]
+    scores = [
+        {"score": f"{i}-{j}", "probability": mat[i, j]}
+        for i in range(n) for j in range(n)
+    ]
+    scores.sort(key=lambda x: x["probability"], reverse=True)
     return [
-        {
-            "score": s["score"],
-            "probability": round(s["probability"] * 100, 2)
-        }
+        {"score": s["score"], "probability": round(s["probability"] * 100, 2)}
         for s in scores[:top_n]
     ]
+
 
 
 def predict(home, away):
@@ -63,123 +113,21 @@ def predict(home, away):
     if not home_stats or not away_stats:
         return {"error": "Not enough data"}
 
-    # BASE EXPECTED GOALS
-
-    home_xg = (
-        home_stats["home_attack"]
-        * away_stats["away_defense"]
-        * LEAGUE_HOME_GOALS
-    )
-
-    away_xg = (
-        away_stats["away_attack"]
-        * home_stats["home_defense"]
-        * LEAGUE_AWAY_GOALS
-    )
-
-    # FORM BOOST
-
-    home_xg *= (0.85 + home_stats["form"] * 0.35)
-    away_xg *= (0.85 + away_stats["form"] * 0.35)
-
-    # BIG SCORING BOOST
-
-    home_xg *= (
-        1 + home_stats["home_big_scoring"] * 0.18
-    )
-
-    away_xg *= (
-        1 + away_stats["away_big_scoring"] * 0.18
-    )
-
-    # CLEAN SHEET REDUCTION
-
-    home_xg *= (
-        1 - away_stats["away_clean_sheets"] * 0.15
-    )
-
-    away_xg *= (
-        1 - home_stats["home_clean_sheets"] * 0.15
-    )
-
-    # HOME ADVANTAGE
-
-    home_xg *= 1.10
-
-    # CONTROLLED VARIANCE
-
-    home_xg += np.random.normal(0, 0.12)
-    away_xg += np.random.normal(0, 0.12)
-
-    # REALISTIC LIMITS
-
-    home_xg = max(0.2, min(home_xg, 5.5))
-    away_xg = max(0.2, min(away_xg, 5.5))
-
-    # POISSON SCORE MATRIX
-
-    matrix = poisson_matrix(home_xg, away_xg)
-
-    home_prob = 0
-    draw_prob = 0
-    away_prob = 0
-
-    best_prob = 0
-    best_score = (0, 0)
-
-    for i in range(MAX_GOALS + 1):
-        for j in range(MAX_GOALS + 1):
-
-            prob = matrix[i][j]
-
-            if i > j:
-                home_prob += prob
-
-            elif i == j:
-                draw_prob += prob
-
-            else:
-                away_prob += prob
-
-            if prob > best_prob:
-                best_prob = prob
-                best_score = (i, j)
-
-    total = (
-        home_prob
-        + draw_prob
-        + away_prob
-    )
-
-    home_prob = (home_prob / total) * 100
-    draw_prob = (draw_prob / total) * 100
-    away_prob = (away_prob / total) * 100
+    home_xg, away_xg = compute_xg(home_stats, away_stats)
+    mat               = score_matrix(home_xg, away_xg)
+    home_prob, draw_prob, away_prob = outcome_probs(mat)
+    best              = predicted_score(mat, home_xg, away_xg)
 
     return {
-
-        "teamAWinProb": round(home_prob, 2),
-
-        "drawProb": round(draw_prob, 2),
-
-        "teamBWinProb": round(away_prob, 2),
-
-        "teamAGoals": round(home_xg, 2),
-
-        "teamBGoals": round(away_xg, 2),
-
-        "predictedScore":
-            f"{best_score[0]}-{best_score[1]}",
-
-        "topScorelines":
-            top_scorelines(matrix, 5)
+        "teamAWinProb":   home_prob,
+        "drawProb":       draw_prob,
+        "teamBWinProb":   away_prob,
+        "teamAGoals":     home_xg,
+        "teamBGoals":     away_xg,
+        "predictedScore": f"{best[0]}-{best[1]}",
+        "topScorelines":  top_scorelines(mat, 5),
     }
 
 
 if __name__ == "__main__":
-
-    print(
-        json.dumps(
-            predict(sys.argv[1], sys.argv[2]),
-            indent=4
-        )
-    )
+    print(json.dumps(predict(sys.argv[1], sys.argv[2]), indent=4))
