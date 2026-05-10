@@ -164,7 +164,7 @@ response = requests.get(url, headers=headers)
 data = response.json()
 
 print("\n" + "=" * 44)
-print("    🔥  PREMIER LEAGUE PREDICTIONS  🔥")
+print("      PREMIER LEAGUE PREDICTIONS ")
 print("=" * 44)
 
 for m in data.get("matches", [])[:10]:
