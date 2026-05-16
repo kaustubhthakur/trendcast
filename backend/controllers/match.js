@@ -16,7 +16,6 @@ const createMatch = async (req, res) => {
       });
     }
 
-    // ✅ Prevent same teams
     if (
       teamAName.trim().toLowerCase() ===
       teamBName.trim().toLowerCase()
@@ -26,7 +25,6 @@ const createMatch = async (req, res) => {
       });
     }
 
-    // 🔥 CALL PYTHON
     const prediction = await runPrediction(teamAName, teamBName);
 
     if (prediction.error) {
