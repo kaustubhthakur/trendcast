@@ -7,6 +7,9 @@ const cors = require('cors')
 const pool = require('./db')
 const PORT = 8081;
 const app = express();
+const cookieParser = require("cookie-parser");
+
+app.use(cookieParser());
 
 app.get('/health', async (req, res) => {
   try {

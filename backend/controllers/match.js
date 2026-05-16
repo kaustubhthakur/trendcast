@@ -162,14 +162,9 @@ const voteMatch = async (req, res) => {
 
     const matchId = req.params.id;
 
+    const userId = req.user.id;
+
     const { voteType } = req.body;
-
-    if (!voteType) {
-
-      return res.status(400).json({
-        error: "voteType is required"
-      });
-    }
 
     const allowedVotes = [
       "TEAM_A",
@@ -187,20 +182,21 @@ const voteMatch = async (req, res) => {
     const updatedMatch =
       await MatchModel.voteMatch({
         matchId,
+        userId,
         voteType
       });
 
-    if (!updatedMatch) {
+   if (!updatedMatch) {
 
-      return res.status(404).json({
-        error: "Match not found"
-      });
-    }
+  return res.status(404).json({
+    error: "Match not found"
+  });
+}
 
-    return res.status(200).json({
-      message: "Vote recorded successfully",
-      data: updatedMatch
-    });
+return res.status(200).json({
+  message: "Vote updated successfully",
+  data: updatedMatch
+});
 
   } catch (err) {
 
