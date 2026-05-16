@@ -13,8 +13,10 @@ exports.CreateMatch = async ({
   teamBGoals,
   matchTime
 }) => {
+
   const res = await pool.query(
-    `INSERT INTO matches (
+    `
+    INSERT INTO matches (
       team_a_name,
       team_a_logo,
       team_b_name,
@@ -25,10 +27,16 @@ exports.CreateMatch = async ({
       predicted_result,
       team_a_goals,
       team_b_goals,
-      match_time
-    ) 
-    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
-    RETURNING *`,
+      match_time,
+      vote_team_a,
+      vote_draw,
+      vote_team_b
+    )
+    VALUES (
+      $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,0,0,0
+    )
+    RETURNING *
+    `,
     [
       teamAName,
       teamALogo,
@@ -47,19 +55,33 @@ exports.CreateMatch = async ({
   return res.rows[0];
 };
 
-exports.voteMatch = async ({ matchId, voteType }) => {
+exports.voteMatch = async ({
+  matchId,
+  voteType
+}) => {
+
   let column;
 
-  if (voteType === "TEAM_A") column = "vote_team_a";
-  else if (voteType === "DRAW") column = "vote_draw";
-  else if (voteType === "TEAM_B") column = "vote_team_b";
-  else throw new Error("Invalid vote type");
+  if (voteType === "TEAM_A") {
+    column = "vote_team_a";
+  }
+  else if (voteType === "DRAW") {
+    column = "vote_draw";
+  }
+  else if (voteType === "TEAM_B") {
+    column = "vote_team_b";
+  }
+  else {
+    throw new Error("Invalid vote type");
+  }
 
   const res = await pool.query(
-    `UPDATE matches
-     SET ${column} = ${column} + 1
-     WHERE id = $1
-     RETURNING *`,
+    `
+    UPDATE matches
+    SET ${column} = ${column} + 1
+    WHERE id = $1
+    RETURNING *
+    `,
     [matchId]
   );
 

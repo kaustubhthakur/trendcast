@@ -3,8 +3,6 @@ const path = require("path")
 
  const runPrediction = (teamA, teamB) => {
   return new Promise((resolve, reject) => {
-
-    // ✅ FIXED PATH HERE
     const scriptPath = path.resolve(__dirname, "../../algorithm/predict.py");
 
     exec(
