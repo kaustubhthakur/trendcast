@@ -35,6 +35,23 @@ exports.CreateMatch = async ({
     VALUES (
       $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,0,0,0
     )
+
+    ON CONFLICT (
+      team_a_name,
+      team_b_name,
+      match_time
+    )
+
+    DO UPDATE SET
+      team_a_logo = EXCLUDED.team_a_logo,
+      team_b_logo = EXCLUDED.team_b_logo,
+      team_a_win_prob = EXCLUDED.team_a_win_prob,
+      draw_prob = EXCLUDED.draw_prob,
+      team_b_win_prob = EXCLUDED.team_b_win_prob,
+      predicted_result = EXCLUDED.predicted_result,
+      team_a_goals = EXCLUDED.team_a_goals,
+      team_b_goals = EXCLUDED.team_b_goals
+
     RETURNING *
     `,
     [
@@ -86,4 +103,15 @@ exports.voteMatch = async ({
   );
 
   return res.rows[0];
+};
+
+exports.getAllMatches = async () => {
+
+  const res = await pool.query(`
+    SELECT *
+    FROM matches
+    ORDER BY match_time ASC
+  `);
+
+  return res.rows;
 };

@@ -1,5 +1,7 @@
 require("dotenv").config();
 
+const { v4: uuidv4 } = require("uuid");
+
 const MatchModel = require("../models/Match");
 const axios = require("axios");
 
@@ -13,7 +15,21 @@ const {
 const API_KEY = process.env.FOOTBALL_API_KEY;
 
 const createMatch = async (req, res) => {
+
   try {
+
+    const alreadyExists =
+      await MatchModel.getAllMatches();
+
+    if (alreadyExists.length > 0) {
+
+      return res.status(200).json({
+        message:
+          "Matches already exist, fetched from database",
+        total: alreadyExists.length,
+        data: alreadyExists
+      });
+    }
 
     const url =
       "https://api.football-data.org/v4/competitions/PL/matches?status=SCHEDULED";
@@ -27,6 +43,7 @@ const createMatch = async (req, res) => {
     const fixtures = response.data.matches;
 
     if (!fixtures || fixtures.length === 0) {
+
       return res.status(404).json({
         error: "No scheduled matches found"
       });
@@ -60,10 +77,11 @@ const createMatch = async (req, res) => {
         continue;
       }
 
-      const prediction = await runPrediction(
-        teamAName,
-        teamBName
-      );
+      const prediction =
+        await runPrediction(
+          teamAName,
+          teamBName
+        );
 
       if (prediction.error) {
 
@@ -97,16 +115,24 @@ const createMatch = async (req, res) => {
 
       const match =
         await MatchModel.CreateMatch({
+
+          id: uuidv4(),
+
           teamAName,
           teamALogo,
+
           teamBName,
           teamBLogo,
+
           teamAWinProb,
           drawProb,
           teamBWinProb,
+
           predictedResult,
+
           teamAGoals,
           teamBGoals,
+
           matchTime
         });
 
@@ -131,6 +157,7 @@ const createMatch = async (req, res) => {
 };
 
 const voteMatch = async (req, res) => {
+
   try {
 
     const matchId = req.params.id;
@@ -138,6 +165,7 @@ const voteMatch = async (req, res) => {
     const { voteType } = req.body;
 
     if (!voteType) {
+
       return res.status(400).json({
         error: "voteType is required"
       });
@@ -150,6 +178,7 @@ const voteMatch = async (req, res) => {
     ];
 
     if (!allowedVotes.includes(voteType)) {
+
       return res.status(400).json({
         error: "Invalid vote type"
       });
@@ -162,6 +191,7 @@ const voteMatch = async (req, res) => {
       });
 
     if (!updatedMatch) {
+
       return res.status(404).json({
         error: "Match not found"
       });
