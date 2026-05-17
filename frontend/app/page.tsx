@@ -11,12 +11,7 @@ export default function HomePage() {
     <>
       <Header />
       <main className={styles.main}>
-        <div className={styles.heroSection}>
-          <p className={styles.heroEyebrow}>Premier League · AI Predictions</p>
-          <h1 className={styles.heroTitle}>
-            Predict. <span>Vote.</span> Win.
-          </h1>
-          
+        <div className={styles.heroSection}>              
         </div>
         <MatchList /> 
       </main>
