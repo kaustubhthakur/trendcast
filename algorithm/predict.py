@@ -77,7 +77,7 @@ def predicted_score(mat, home_xg, away_xg):
     n        = mat.shape[0]
     best_val  = -1
     best_cell = (1, 0)
-    xg_ratio  = np.log(home_xg / away_xg)  # negative if away stronger
+    xg_ratio  = np.log(home_xg / away_xg) 
 
     for i in range(n):
         for j in range(n):
