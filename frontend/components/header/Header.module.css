@@ -1,8 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500;600&display=swap');
 
-/* ════════════════════════════════
-   VARIABLES
-════════════════════════════════ */
 :global(:root) {
   --ink:           #1a1a2e;
   --gold:          #c8a96e;
@@ -17,9 +14,6 @@
   --font-body:     'DM Sans', system-ui, sans-serif;
 }
 
-/* ════════════════════════════════
-   HEADER — always visible, solid
-════════════════════════════════ */
 .header {
   position: fixed;
   top: 0;
@@ -38,9 +32,7 @@
   box-shadow: var(--shadow-header);
 }
 
-/* ════════════════════════════════
-   INNER ROW
-════════════════════════════════ */
+
 .inner {
   max-width: 1280px;
   margin: 0 auto;
@@ -51,9 +43,6 @@
   gap: 2rem;
 }
 
-/* ════════════════════════════════
-   LOGO
-════════════════════════════════ */
 .logo {
   display: flex;
   align-items: center;
@@ -79,9 +68,7 @@
   line-height: 1;
 }
 
-/* ════════════════════════════════
-   NAV LINKS
-════════════════════════════════ */
+
 .nav {
   display: flex;
   align-items: center;
@@ -106,7 +93,7 @@
   background: var(--cream);
 }
 
-/* gold underline on hover */
+
 .navLink::after {
   content: '';
   position: absolute;
@@ -125,9 +112,6 @@
   transform: scaleX(1);
 }
 
-/* ════════════════════════════════
-   ACTION BUTTONS
-════════════════════════════════ */
 .actions {
   display: flex;
   align-items: center;
@@ -135,7 +119,6 @@
   flex-shrink: 0;
 }
 
-/* Sign in — ghost */
 .btnGhost {
   font-family: var(--font-body);
   font-size: 0.875rem;
@@ -156,7 +139,7 @@
   color: var(--gold-dark);
 }
 
-/* Register — solid gold */
+
 .btnGold {
   font-family: var(--font-body);
   font-size: 0.875rem;
@@ -184,9 +167,7 @@
   box-shadow: none;
 }
 
-/* ════════════════════════════════
-   USER PILL + LOGOUT
-════════════════════════════════ */
+
 .userGreeting {
   display: flex;
   align-items: center;
@@ -203,7 +184,7 @@
   letter-spacing: 0.01em;
 }
 
-/* avatar circle */
+
 .userAvatar {
   width: 22px;
   height: 22px;
@@ -362,9 +343,7 @@
   padding-left: 1.85rem;
 }
 
-/* ════════════════════════════════
-   RESPONSIVE
-════════════════════════════════ */
+
 @media (max-width: 768px) {
   .nav,
   .actions {

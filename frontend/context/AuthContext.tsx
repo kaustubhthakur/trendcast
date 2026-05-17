@@ -26,7 +26,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  // Check if user is already logged in on mount
+
   useEffect(() => {
     const stored = localStorage.getItem("user");
     if (stored) {
@@ -64,19 +64,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "Registration failed");
-    // Redirect to login after successful registration
+
     router.push("/auth/login?registered=true");
   };
 
   const logout = async () => {
     try {
-      // Call backend logout to clear httpOnly cookie
+
       await fetch(`${API_BASE}/auth/logout`, {
         method: "POST",
         credentials: "include",
       });
     } catch {
-      // Even if backend call fails, clear client state
+
     }
     setUser(null);
     localStorage.removeItem("user");
