@@ -155,6 +155,20 @@ const createMatch = async (req, res) => {
     });
   }
 };
+const getAllMatches = async (req, res) => {
+  try {
+    const matches = await MatchModel.getAllMatches();
+    return res.status(200).json({
+      message: "Matches fetched successfully",
+      total: matches.length,
+      data: matches
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 
 const voteMatch = async (req, res) => {
 
@@ -210,5 +224,6 @@ return res.status(200).json({
 
 module.exports = {
   createMatch,
-  voteMatch
+  voteMatch,
+  getAllMatches
 };

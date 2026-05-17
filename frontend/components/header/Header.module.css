@@ -1,116 +1,164 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500;600&display=swap');
+
+/* ════════════════════════════════
+   VARIABLES
+════════════════════════════════ */
+:global(:root) {
+  --ink:           #1a1a2e;
+  --gold:          #c8a96e;
+  --gold-dark:     #a8843a;
+  --paper:         #fdfcf9;
+  --cream:         #f5f1ea;
+  --border:        #e8e4dc;
+  --muted:         #8a8070;
+  --radius-sm:     8px;
+  --shadow-header: 0 1px 0 #e8e4dc, 0 4px 24px rgba(26,26,46,0.06);
+  --font-playfair: 'Playfair Display', Georgia, serif;
+  --font-body:     'DM Sans', system-ui, sans-serif;
+}
+
+/* ════════════════════════════════
+   HEADER — always visible, solid
+════════════════════════════════ */
 .header {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 100;
-  padding: 0 2rem;
-  transition: background 0.4s ease, box-shadow 0.4s ease, padding 0.3s ease;
+  background: var(--paper);
+  border-bottom: 1px solid var(--border);
+  transition: box-shadow 0.3s ease, background 0.3s ease;
 }
 
-.header.scrolled {
-  background: rgba(250, 248, 243, 0.92);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  box-shadow: 0 1px 0 var(--border), var(--shadow-soft);
-  padding: 0 2rem;
+.scrolled {
+  background: rgba(253, 252, 249, 0.96);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: var(--shadow-header);
 }
 
+/* ════════════════════════════════
+   INNER ROW
+════════════════════════════════ */
 .inner {
-  max-width: 1200px;
+  max-width: 1280px;
   margin: 0 auto;
-  height: 72px;
+  height: 64px;
+  padding: 0 2rem;
   display: flex;
   align-items: center;
   gap: 2rem;
 }
 
-/* ── Logo ── */
+/* ════════════════════════════════
+   LOGO
+════════════════════════════════ */
 .logo {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.6rem;
   text-decoration: none;
   flex-shrink: 0;
+  margin-right: auto;
 }
 
-.logoMark {
-  font-size: 1.2rem;
-  color: var(--gold);
-  animation: spin-slow 8s linear infinite;
-  display: inline-block;
+.logoImg {
+  height: 60px;
+  width: auto;
+  object-fit: contain;
+  display: block;
 }
 
 .logoText {
   font-family: var(--font-playfair);
-  font-size: 1.4rem;
+  font-size: 1.35rem;
   font-weight: 700;
   color: var(--ink);
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
+  line-height: 1;
 }
 
-/* ── Nav ── */
+/* ════════════════════════════════
+   NAV LINKS
+════════════════════════════════ */
 .nav {
   display: flex;
   align-items: center;
-  gap: 2rem;
-  margin-left: auto;
+  gap: 0.15rem;
 }
 
 .navLink {
+  font-family: var(--font-body);
   font-size: 0.875rem;
   font-weight: 500;
   color: var(--muted);
   letter-spacing: 0.02em;
-  transition: color 0.2s;
+  padding: 0.45rem 0.9rem;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
   position: relative;
-}
-
-.navLink::after {
-  content: "";
-  position: absolute;
-  bottom: -3px;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: var(--gold);
-  transform: scaleX(0);
-  transition: transform 0.25s ease;
-  transform-origin: left;
+  transition: color 0.2s ease, background 0.2s ease;
 }
 
 .navLink:hover {
   color: var(--ink);
+  background: var(--cream);
+}
+
+/* gold underline on hover */
+.navLink::after {
+  content: '';
+  position: absolute;
+  bottom: 6px;
+  left: 0.9rem;
+  right: 0.9rem;
+  height: 1.5px;
+  background: var(--gold);
+  border-radius: 2px;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.22s ease;
 }
 
 .navLink:hover::after {
   transform: scaleX(1);
 }
 
-/* ── Actions ── */
+/* ════════════════════════════════
+   ACTION BUTTONS
+════════════════════════════════ */
 .actions {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  margin-left: 1.5rem;
+  gap: 0.5rem;
+  flex-shrink: 0;
 }
 
+/* Sign in — ghost */
 .btnGhost {
+  font-family: var(--font-body);
   font-size: 0.875rem;
   font-weight: 500;
   color: var(--ink);
-  padding: 0.5rem 1.25rem;
+  padding: 0.5rem 1.15rem;
   border-radius: var(--radius-sm);
   border: 1px solid var(--border);
-  transition: border-color 0.2s, background 0.2s;
+  background: transparent;
+  text-decoration: none;
+  transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+  white-space: nowrap;
 }
 
 .btnGhost:hover {
   border-color: var(--gold);
   background: var(--cream);
+  color: var(--gold-dark);
 }
 
+/* Register — solid gold */
 .btnGold {
+  font-family: var(--font-body);
   font-size: 0.875rem;
   font-weight: 600;
   color: #fff;
@@ -118,7 +166,9 @@
   border-radius: var(--radius-sm);
   background: var(--ink);
   border: 1px solid var(--ink);
-  transition: background 0.2s, transform 0.15s;
+  text-decoration: none;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+  white-space: nowrap;
   letter-spacing: 0.01em;
 }
 
@@ -126,35 +176,112 @@
   background: var(--gold-dark);
   border-color: var(--gold-dark);
   transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(168, 132, 58, 0.28);
 }
 
-/* ── Mobile Burger ── */
+.btnGold:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* ════════════════════════════════
+   USER PILL + LOGOUT
+════════════════════════════════ */
+.userGreeting {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--ink);
+  padding: 0.45rem 0.9rem;
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+}
+
+/* avatar circle */
+.userAvatar {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--gold);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+  flex-shrink: 0;
+  letter-spacing: 0;
+}
+
+.btnLogout {
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--muted);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease, transform 0.15s ease;
+  white-space: nowrap;
+}
+
+.btnLogout:hover:not(:disabled) {
+  color: #c0392b;
+  border-color: rgba(192, 57, 43, 0.4);
+  background: #fef5f5;
+  transform: translateY(-1px);
+}
+
+.btnLogout:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .burger {
   display: none;
   flex-direction: column;
+  justify-content: center;
   gap: 5px;
-  padding: 4px;
+  width: 36px;
+  height: 36px;
+  padding: 6px;
   margin-left: auto;
   background: none;
-  border: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
   cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.burger:hover {
+  background: var(--cream);
+  border-color: var(--gold);
 }
 
 .burger span {
   display: block;
-  width: 22px;
-  height: 2px;
+  width: 100%;
+  height: 1.5px;
   background: var(--ink);
   border-radius: 2px;
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  transition: transform 0.28s ease, opacity 0.28s ease;
   transform-origin: center;
 }
 
-.burgerOpen span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.burgerOpen span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
 .burgerOpen span:nth-child(2) { opacity: 0; transform: scaleX(0); }
-.burgerOpen span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+.burgerOpen span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
 
-/* ── Mobile Drawer ── */
 .drawer {
   display: none;
   flex-direction: column;
@@ -162,31 +289,34 @@
   border-top: 1px solid var(--border);
   max-height: 0;
   overflow: hidden;
-  transition: max-height 0.4s ease;
+  transition: max-height 0.38s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .drawerOpen {
-  max-height: 400px;
+  max-height: 520px;
 }
 
 .drawerLink {
-  padding: 1rem 2rem;
-  font-size: 0.95rem;
+  display: block;
+  padding: 0.85rem 1.5rem;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
   font-weight: 500;
   color: var(--muted);
   border-bottom: 1px solid var(--border);
-  transition: color 0.2s, background 0.2s;
+  text-decoration: none;
+  transition: color 0.18s ease, background 0.18s ease, padding-left 0.18s ease;
 }
 
 .drawerLink:hover {
   color: var(--ink);
   background: var(--cream);
+  padding-left: 1.85rem;
 }
 
 .drawerDivider {
   height: 1px;
-  background: var(--gold-light);
-  margin: 0.25rem 2rem;
+  background: var(--border);
 }
 
 .drawerHighlight {
@@ -194,69 +324,64 @@
   font-weight: 600;
 }
 
-/* ── Responsive ── */
-@media (max-width: 768px) {
-  .nav, .actions { display: none; }
-  .burger { display: flex; }
-  .drawer { display: flex; }
-}
-
-/* ── User greeting & logout ── */
-.userGreeting {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--ink);
-  padding: 0.4rem 0.75rem;
-  background: var(--cream);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-}
-
-.btnLogout {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #fff;
-  padding: 0.5rem 1.25rem;
-  border-radius: var(--radius-sm);
-  background: #c0392b;
-  border: 1px solid #c0392b;
-  cursor: pointer;
-  transition: background 0.2s, transform 0.15s;
-}
-
-.btnLogout:hover:not(:disabled) {
-  background: #a93226;
-  transform: translateY(-1px);
-}
-
-.btnLogout:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+.drawerHighlight:hover {
+  color: var(--gold-dark);
 }
 
 .drawerUser {
-  padding: 1rem 2rem;
-  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.85rem 1.5rem;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
   font-weight: 600;
   color: var(--ink);
   border-bottom: 1px solid var(--border);
-  display: block;
+  background: var(--cream);
 }
 
 .drawerLogout {
-  padding: 1rem 2rem;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #c0392b;
-  border-bottom: 1px solid var(--border);
   display: block;
   width: 100%;
   text-align: left;
+  padding: 0.85rem 1.5rem;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #c0392b;
+  border: none;
+  border-bottom: 1px solid var(--border);
   background: none;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.18s ease, padding-left 0.18s ease;
 }
 
 .drawerLogout:hover {
-  background: #fdf2f2;
+  background: #fef5f5;
+  padding-left: 1.85rem;
+}
+
+/* ════════════════════════════════
+   RESPONSIVE
+════════════════════════════════ */
+@media (max-width: 768px) {
+  .nav,
+  .actions {
+    display: none;
+  }
+
+  .burger {
+    display: flex;
+  }
+
+  .drawer {
+    display: flex;
+  }
+
+  .inner {
+    height: 58px;
+    padding: 0 1.25rem;
+    gap: 1rem;
+  }
 }
