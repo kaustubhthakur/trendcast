@@ -15,9 +15,9 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <AuthProvider>   {/* ← add this */}
+        <AuthProvider> 
           {children}
-        </AuthProvider>  {/* ← and this */}
+        </AuthProvider>  
       </body>
     </html>
   );

@@ -45,14 +45,13 @@ export default function Header() {
           <span className={styles.logoText}>FootBuzz</span>
         </Link>
 
-        {/* Desktop Nav */}
         <nav className={styles.nav}>
           <Link href="/" className={styles.navLink}>Home</Link>
           <Link href="#dashboard" className={styles.navLink}>Dashboard</Link>
           <Link href="#about" className={styles.navLink}>About</Link>
         </nav>
 
-        {/* Desktop Actions */}
+
         <div className={styles.actions}>
           {user ? (
             <>
@@ -76,7 +75,7 @@ export default function Header() {
           )}
         </div>
 
-        {/* Mobile Burger */}
+
         <button
           className={`${styles.burger} ${menuOpen ? styles.burgerOpen : ""}`}
           onClick={() => setMenuOpen(!menuOpen)}
@@ -86,7 +85,6 @@ export default function Header() {
         </button>
       </div>
 
-      {/* Mobile Drawer */}
       <div className={`${styles.drawer} ${menuOpen ? styles.drawerOpen : ""}`}>
         <Link href="/" className={styles.drawerLink} onClick={() => setMenuOpen(false)}>Home</Link>
         <Link href="#features" className={styles.drawerLink} onClick={() => setMenuOpen(false)}>Features</Link>

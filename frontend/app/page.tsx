@@ -5,7 +5,6 @@ import MatchList from "../components/matches/MatchList";
 import { useAuth } from "../context/AuthContext";
 import styles from "./page.module.css";
 
-// Remove user entirely:
 export default function HomePage() {
   return (
     <>
