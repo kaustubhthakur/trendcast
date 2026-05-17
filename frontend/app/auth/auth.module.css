@@ -1,0 +1,391 @@
+/* ════════════════════════════════
+   AUTH SHARED STYLES
+═══════════════════════════════════ */
+.page {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+}
+
+.pageReverse {
+  direction: rtl;
+}
+
+.pageReverse > * {
+  direction: ltr;
+}
+
+/* ── Form Panel ── */
+.panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 3rem 4rem;
+  background: var(--paper);
+  position: relative;
+  overflow-y: auto;
+}
+
+.panelInner {
+  max-width: 420px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.backLink {
+  display: inline-block;
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-bottom: 2.5rem;
+  transition: color 0.2s;
+  letter-spacing: 0.02em;
+}
+
+.backLink:hover {
+  color: var(--gold-dark);
+}
+
+/* Logo */
+.logoWrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.logoMark {
+  font-size: 1.1rem;
+  color: var(--gold);
+}
+
+.logoText {
+  font-family: var(--font-playfair);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+/* Headings */
+.formSection {
+  animation: fadeUp 0.6s ease both;
+}
+
+.formTitle {
+  font-family: var(--font-playfair);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin-bottom: 0.5rem;
+}
+
+.formSubtitle {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+/* Banners */
+.errorBanner {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: #fdf2f2;
+  border: 1px solid #f5c6c6;
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1rem;
+  font-size: 0.85rem;
+  color: var(--error);
+  margin-bottom: 1.25rem;
+  animation: fadeIn 0.3s ease;
+}
+
+.errorIcon {
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.successBanner {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: #f0faf4;
+  border: 1px solid #b2e0c1;
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1rem;
+  font-size: 0.85rem;
+  color: var(--success);
+  margin-bottom: 1.25rem;
+  animation: fadeIn 0.3s ease;
+}
+
+/* Form */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.labelRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: 0.02em;
+}
+
+.showPass {
+  font-size: 0.75rem;
+  color: var(--gold-dark);
+  font-weight: 500;
+  cursor: pointer;
+  background: none;
+  border: none;
+  transition: color 0.2s;
+}
+
+.showPass:hover {
+  color: var(--gold);
+}
+
+.input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 0.925rem;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  -webkit-appearance: none;
+}
+
+.input::placeholder {
+  color: #bbb;
+}
+
+.input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(200, 169, 110, 0.12);
+}
+
+.inputError {
+  border-color: var(--error) !important;
+  box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.08) !important;
+}
+
+.fieldError {
+  font-size: 0.75rem;
+  color: var(--error);
+}
+
+/* Password Strength */
+.strengthWrap {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.strengthBars {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+}
+
+.strengthBar {
+  flex: 1;
+  height: 3px;
+  border-radius: 100px;
+  transition: background 0.3s;
+}
+
+.strengthLabel {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  min-width: 40px;
+  text-align: right;
+  transition: color 0.3s;
+}
+
+/* Submit Button */
+.submitBtn {
+  width: 100%;
+  padding: 0.9rem 1.5rem;
+  background: var(--ink);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 48px;
+}
+
+.submitBtn:hover:not(:disabled) {
+  background: var(--gold-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-gold);
+}
+
+.submitBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btnArrow {
+  transition: transform 0.2s;
+}
+
+.submitBtn:hover:not(:disabled) .btnArrow {
+  transform: translateX(4px);
+}
+
+/* Spinner */
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin-slow 0.7s linear infinite;
+}
+
+/* Switch */
+.switchText {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-top: 1.5rem;
+}
+
+.switchLink {
+  color: var(--gold-dark);
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.switchLink:hover {
+  color: var(--gold);
+}
+
+/* ── Deco Panel ── */
+.deco {
+  background: var(--ink);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.decoLeft {
+  order: -1;
+}
+
+.decoGrid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+.decoOrb {
+  position: absolute;
+  top: 20%;
+  right: -10%;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(200, 169, 110, 0.18) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: float 9s ease-in-out infinite;
+}
+
+.decoOrb2 {
+  position: absolute;
+  bottom: 10%;
+  left: -5%;
+  width: 280px;
+  height: 280px;
+  background: radial-gradient(circle, rgba(200, 169, 110, 0.1) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: float 12s ease-in-out infinite reverse;
+}
+
+.decoQuote {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 2rem;
+}
+
+.quoteMark {
+  display: block;
+  font-family: var(--font-playfair);
+  font-size: 6rem;
+  line-height: 0.8;
+  color: var(--gold);
+  opacity: 0.6;
+  margin-bottom: 1rem;
+}
+
+.decoQuote p {
+  font-family: var(--font-playfair);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.4;
+  margin-bottom: 1.25rem;
+  letter-spacing: -0.01em;
+}
+
+.quoteAuthor {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.45);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .page, .pageReverse {
+    grid-template-columns: 1fr;
+    direction: ltr;
+  }
+
+  .deco { display: none; }
+
+  .panel {
+    padding: 2rem 1.5rem;
+    min-height: 100vh;
+  }
+
+  .panelInner {
+    max-width: 100%;
+  }
+}

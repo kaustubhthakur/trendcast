@@ -20,7 +20,11 @@ app.get('/health', async (req, res) => {
   }
 });
 app.use(express.json());
-app.use(cors());
+
+app.use(cors({
+  origin: "http://localhost:3000",  // your Next.js frontend
+  credentials: true,                // required for cookies
+}));
 
 app.use('/auth',authrouter);
 app.use('/user',userrouter);
