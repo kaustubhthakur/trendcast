@@ -1,0 +1,163 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&display=swap');
+
+.page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 4rem 1.25rem;
+  background: #0c0d0f;
+  font-family: 'Geist', system-ui, sans-serif;
+}
+
+/* ── Card ── */
+.card {
+  width: 100%;
+  max-width: 540px;
+  background: #111215;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 16px;
+  overflow: hidden;
+  animation: fadeUp 0.35s ease both;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Top section ── */
+.top {
+  padding: 2rem 2rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+/* ── Avatar ── */
+.avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: #1e2024;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 600;
+  color: #6b7280;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.avatarImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* ── Name block ── */
+.nameBlock {}
+.username {
+  font-size: 18px;
+  font-weight: 600;
+  color: #f1f1f1;
+  margin: 0 0 4px;
+  letter-spacing: -0.01em;
+}
+.email {
+  font-size: 13px;
+  color: #4b5563;
+  margin: 0;
+}
+
+/* ── Fields ── */
+.fields {
+  padding: 0;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.9rem 2rem;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  gap: 1rem;
+}
+.row:last-child { border-bottom: none; }
+
+.rowLabel {
+  font-size: 12px;
+  color: #4b5563;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.rowVal {
+  font-size: 13px;
+  color: #9ca3af;
+  text-align: right;
+  word-break: break-all;
+}
+
+.rowValSet {
+  font-size: 13px;
+  color: #d1d5db;
+  text-align: right;
+  font-weight: 500;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.05);
+  color: #6b7280;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.badgeSet {
+  background: rgba(34,197,94,0.08);
+  color: #4ade80;
+  border-color: rgba(34,197,94,0.15);
+}
+
+/* ── Footer ── */
+.footer {
+  padding: 1.25rem 2rem;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+
+.editBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: 'Geist', system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.04);
+  color: #9ca3af;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.editBtn:hover {
+  background: rgba(255,255,255,0.07);
+  color: #e5e7eb;
+  border-color: rgba(255,255,255,0.15);
+}
+
+.loading, .error {
+  text-align: center;
+  margin-top: 5rem;
+  font-family: 'Geist', system-ui, sans-serif;
+  color: #4b5563;
+  font-size: 14px;
+}
+.error { color: #f87171; }

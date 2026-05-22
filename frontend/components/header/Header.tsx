@@ -24,7 +24,6 @@ export default function Header() {
     setLoggingOut(false);
   };
 
-  // Get initials for avatar
   const initials = user?.username
     ? user.username.slice(0, 2).toUpperCase()
     : "";
@@ -51,14 +50,14 @@ export default function Header() {
           <Link href="#about" className={styles.navLink}>About</Link>
         </nav>
 
-
         <div className={styles.actions}>
           {user ? (
             <>
-              <span className={styles.userGreeting}>
+              {/* Avatar links to /profile */}
+              <Link href="/profile" className={styles.userGreeting}>
                 <span className={styles.userAvatar}>{initials}</span>
                 {user.username}
-              </span>
+              </Link>
               <button
                 className={styles.btnLogout}
                 onClick={handleLogout}
@@ -74,7 +73,6 @@ export default function Header() {
             </>
           )}
         </div>
-
 
         <button
           className={`${styles.burger} ${menuOpen ? styles.burgerOpen : ""}`}
@@ -92,10 +90,14 @@ export default function Header() {
         <div className={styles.drawerDivider} />
         {user ? (
           <>
-            <span className={styles.drawerUser}>
+            <Link
+              href="/profile"
+              className={styles.drawerUser}
+              onClick={() => setMenuOpen(false)}
+            >
               <span className={styles.userAvatar}>{initials}</span>
               {user.username}
-            </span>
+            </Link>
             <button className={styles.drawerLogout} onClick={handleLogout}>
               {loggingOut ? "Signing out…" : "Sign out"}
             </button>
