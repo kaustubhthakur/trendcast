@@ -1,4 +1,3 @@
-// config/teams.js
 
 const TEAM_NAME_MAP = {
   "Manchester United FC": "Man United",
