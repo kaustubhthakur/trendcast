@@ -45,11 +45,11 @@ const login = async (req, res) => {
       return res.status(400).json({ error: "Invalid email or password" });
     }
 
-    const token = jwt.sign(
-      { id: user.id, isAdmin: user.isAdmin || false },
-      process.env.JWT_SECRET,
-      { expiresIn: "7d" }
-    );
+  const token = jwt.sign(
+  { id: user.id, username: user.username, isAdmin: user.isAdmin || false },
+  process.env.JWT_SECRET,
+  { expiresIn: "7d" }
+);
 
     const { password: _, ...userData } = user;
 

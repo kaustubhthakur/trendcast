@@ -3,6 +3,7 @@ require('dotenv').config();
 const authrouter = require('./routes/auth')
 const userrouter = require('./routes/users')
 const matchrouter = require('./routes/matches')
+const communityrouter = require('./routes/community')
 const cors = require('cors')
 const pool = require('./db')
 const PORT = 8081;
@@ -29,4 +30,5 @@ app.use(cors({
 app.use('/auth',authrouter);
 app.use('/user',userrouter);
 app.use('/match',matchrouter);
+app.use('/community',communityrouter);
 app.listen(PORT, () => { console.log(`server is running on port ${PORT}...`) })   

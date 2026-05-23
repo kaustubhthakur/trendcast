@@ -1,5 +1,5 @@
 require("dotenv").config();
-const API_BASE = import.meta.env.VITE_FOOTBALL_API_BASE;
+const API_BASE = process.env.VITE_FOOTBALL_API_BASE;
 
 const { v4: uuidv4 } = require("uuid");
 
