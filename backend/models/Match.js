@@ -72,6 +72,32 @@ exports.CreateMatch = async ({
   return res.rows[0];
 };
 
+exports.findExistingMatch = async ({
+  teamAName,
+  teamBName,
+  matchTime
+}) => {
+
+  const res = await pool.query(
+    `
+    SELECT *
+    FROM matches
+    WHERE
+      team_a_name = $1
+      AND team_b_name = $2
+      AND match_time = $3
+    LIMIT 1
+    `,
+    [
+      teamAName,
+      teamBName,
+      matchTime
+    ]
+  );
+
+  return res.rows[0];
+};
+
 exports.voteMatch = async ({
   matchId,
   userId,
@@ -216,6 +242,7 @@ exports.voteMatch = async ({
     client.release();
   }
 };
+
 exports.getAllMatches = async () => {
 
   const res = await pool.query(

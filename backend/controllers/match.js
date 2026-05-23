@@ -18,29 +18,34 @@ const createMatch = async (req, res) => {
 
   try {
 
-    const alreadyExists =
-      await MatchModel.getAllMatches();
-
-    if (alreadyExists.length > 0) {
-
-      return res.status(200).json({
-        message:
-          "Matches already exist, fetched from database",
-        total: alreadyExists.length,
-        data: alreadyExists
-      });
-    }
-
-    const url =
+    const plUrl =
       "https://api.football-data.org/v4/competitions/PL/matches?status=SCHEDULED";
 
-    const response = await axios.get(url, {
-      headers: {
-        "X-Auth-Token": API_KEY
-      }
-    });
+    const laligaUrl =
+      "https://api.football-data.org/v4/competitions/PD/matches?status=SCHEDULED";
 
-    const fixtures = response.data.matches;
+    const [plResponse, laligaResponse] =
+      await Promise.all([
+
+        axios.get(plUrl, {
+          headers: {
+            "X-Auth-Token": API_KEY
+          }
+        }),
+
+        axios.get(laligaUrl, {
+          headers: {
+            "X-Auth-Token": API_KEY
+          }
+        })
+      ]);
+
+    const fixtures = [
+
+      ...plResponse.data.matches,
+
+      ...laligaResponse.data.matches
+    ];
 
     if (!fixtures || fixtures.length === 0) {
 
@@ -53,13 +58,15 @@ const createMatch = async (req, res) => {
 
     for (const fixture of fixtures) {
 
-      const teamAName = normalizeTeamName(
-        fixture.homeTeam.name
-      );
+      const teamAName =
+        normalizeTeamName(
+          fixture.homeTeam.name
+        );
 
-      const teamBName = normalizeTeamName(
-        fixture.awayTeam.name
-      );
+      const teamBName =
+        normalizeTeamName(
+          fixture.awayTeam.name
+        );
 
       const teamALogo =
         TEAM_LOGOS[teamAName] || null;
@@ -70,10 +77,42 @@ const createMatch = async (req, res) => {
       const matchTime =
         fixture.utcDate || null;
 
+      const competitionCode =
+        fixture.competition.code;
+
       if (
-        teamAName.trim().toLowerCase() ===
-        teamBName.trim().toLowerCase()
+
+        teamAName
+          .trim()
+          .toLowerCase()
+
+        ===
+
+        teamBName
+          .trim()
+          .toLowerCase()
+
       ) {
+        continue;
+      }
+
+      const existingMatch =
+        await MatchModel.findExistingMatch({
+
+          teamAName,
+
+          teamBName,
+
+          matchTime
+        });
+
+      if (existingMatch) {
+
+        console.log(
+
+          `Skipping existing match ${teamAName} vs ${teamBName}`
+        );
+
         continue;
       }
 
@@ -86,6 +125,7 @@ const createMatch = async (req, res) => {
       if (prediction.error) {
 
         console.log(
+
           `Prediction failed for ${teamAName} vs ${teamBName}`
         );
 
@@ -93,24 +133,37 @@ const createMatch = async (req, res) => {
       }
 
       const {
+
         teamAWinProb,
         drawProb,
         teamBWinProb
+
       } = prediction;
 
       const teamAGoals = Math.round(
-        Number(prediction.teamAGoals)
+
+        Number(
+          prediction.teamAGoals
+        )
       );
 
       const teamBGoals = Math.round(
-        Number(prediction.teamBGoals)
+
+        Number(
+          prediction.teamBGoals
+        )
       );
 
       const predictedResult =
+
         teamAGoals > teamBGoals
+
           ? "TEAM_A"
+
           : teamBGoals > teamAGoals
+
           ? "TEAM_B"
+
           : "DRAW";
 
       const match =
@@ -133,17 +186,33 @@ const createMatch = async (req, res) => {
           teamAGoals,
           teamBGoals,
 
-          matchTime
+          matchTime,
+
+          league:
+            competitionCode === "PL"
+              ? "Premier League"
+              : "La Liga"
         });
 
       createdMatches.push(match);
     }
 
+    const allMatches =
+      await MatchModel.getAllMatches();
+
     return res.status(201).json({
+
       message:
-        "Future matches created successfully",
-      total: createdMatches.length,
-      data: createdMatches
+        "Matches processed successfully",
+
+      total:
+        allMatches.length,
+
+      created:
+        createdMatches.length,
+
+      data:
+        allMatches
     });
 
   } catch (err) {

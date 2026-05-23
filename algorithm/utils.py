@@ -8,15 +8,37 @@ df = pd.read_csv(
     os.path.join(BASE_DIR, "features.csv")
 )
 
+FEATURE_COLS = [
+
+    "home_win_rate",
+    "away_win_rate",
+
+    "home_scored",
+    "away_scored",
+
+    "home_conceded",
+    "away_conceded",
+
+    "home_attack_vs_away_defense",
+    "away_attack_vs_home_defense"
+]
+
 LEAGUE_HOME_GOALS = df["FTHG"].mean()
+
 LEAGUE_AWAY_GOALS = df["FTAG"].mean()
 
 
 def weighted_average(values):
 
-    weights = np.arange(1, len(values) + 1)
+    weights = np.arange(
+        1,
+        len(values) + 1
+    )
 
-    return np.average(values, weights=weights)
+    return np.average(
+        values,
+        weights=weights
+    )
 
 
 def get_team_stats(team, last_n=12):
@@ -133,5 +155,8 @@ def get_team_stats(team, last_n=12):
         "away_big_scoring":
             away_big_scoring,
 
-        "form": form
+        "form": form,
+
+        "season":
+            home_matches.iloc[-1]["season"]
     }
