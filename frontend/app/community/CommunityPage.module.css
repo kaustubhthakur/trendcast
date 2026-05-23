@@ -842,7 +842,6 @@
   padding: 4px 0;
 }
 
-/* ── Responsive ──────────────────────────────────────────── */
 @media (max-width: 900px) {
   .layout {
     grid-template-columns: 1fr;

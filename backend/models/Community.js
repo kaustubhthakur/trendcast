@@ -1,12 +1,6 @@
-// models/Community.js
-
 const pool = require("../db");
 
 
-
-// ======================================================
-// CREATE POST
-// ======================================================
 
 exports.createPost = async ({ userId, username, content, imageUrl, videoUrl, matchId, playerPrediction, playerProbability }) => {
   const res = await pool.query(
@@ -16,11 +10,6 @@ exports.createPost = async ({ userId, username, content, imageUrl, videoUrl, mat
   );
   return res.rows[0];
 };
-
-
-// ======================================================
-// GET ALL POSTS
-// ======================================================
 
 exports.getAllPosts = async () => {
 
@@ -42,11 +31,6 @@ exports.getAllPosts = async () => {
   return res.rows;
 };
 
-
-
-// ======================================================
-// GET SINGLE POST
-// ======================================================
 
 exports.getSinglePost = async (postId) => {
 
@@ -71,11 +55,6 @@ exports.getSinglePost = async (postId) => {
   return res.rows[0];
 };
 
-
-
-// ======================================================
-// UPDATE POST
-// ======================================================
 
 exports.updatePost = async ({
   postId,
@@ -106,12 +85,6 @@ exports.updatePost = async ({
   return res.rows[0];
 };
 
-
-
-// ======================================================
-// DELETE POST
-// ======================================================
-
 exports.deletePost = async (postId) => {
 
   const res = await pool.query(
@@ -126,12 +99,6 @@ exports.deletePost = async (postId) => {
 
   return res.rows[0];
 };
-
-
-
-// ======================================================
-// LIKE POST
-// ======================================================
 
 exports.likePost = async ({
   postId,
@@ -201,11 +168,6 @@ exports.likePost = async ({
 };
 
 
-
-// ======================================================
-// COMMENT POST
-// ======================================================
-
 exports.commentPost = async ({
   postId,
   userId,
@@ -234,11 +196,6 @@ exports.commentPost = async ({
 };
 
 
-
-// ======================================================
-// GET COMMENTS
-// ======================================================
-
 exports.getComments = async (postId) => {
 
   const res = await pool.query(
@@ -264,11 +221,6 @@ exports.getComments = async (postId) => {
 };
 
 
-
-// ======================================================
-// DELETE COMMENT
-// ======================================================
-
 exports.deleteComment = async (commentId) => {
 
   const res = await pool.query(
@@ -284,11 +236,6 @@ exports.deleteComment = async (commentId) => {
   return res.rows[0];
 };
 
-
-
-// ======================================================
-// GET POSTS BY MATCH
-// ======================================================
 
 exports.getPostsByMatch = async (matchId) => {
 
@@ -314,11 +261,6 @@ exports.getPostsByMatch = async (matchId) => {
   return res.rows;
 };
 
-
-
-// ======================================================
-// GET TRENDING POSTS
-// ======================================================
 
 exports.getTrendingPosts = async () => {
 
