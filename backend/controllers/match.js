@@ -1,4 +1,5 @@
 require("dotenv").config();
+const API_BASE = import.meta.env.VITE_FOOTBALL_API_BASE;
 
 const { v4: uuidv4 } = require("uuid");
 
@@ -18,14 +19,14 @@ const createMatch = async (req, res) => {
 
   try {
 
-    const plUrl =
-      "https://api.football-data.org/v4/competitions/PL/matches?status=SCHEDULED";
+const plUrl =
+  `${API_BASE}/competitions/PL/matches?status=SCHEDULED`;
 
-    const laligaUrl =
-      "https://api.football-data.org/v4/competitions/PD/matches?status=SCHEDULED";
+const laligaUrl =
+  `${API_BASE}/competitions/PD/matches?status=SCHEDULED`;
 
-    const uclUrl =
-      "https://api.football-data.org/v4/competitions/CL/matches?status=SCHEDULED";
+const uclUrl =
+  `${API_BASE}/competitions/CL/matches?status=SCHEDULED`;
 
     const [plResponse, laligaResponse, uclResponse] =
       await Promise.all([
@@ -145,10 +146,6 @@ const createMatch = async (req, res) => {
 };
 
 
-
-// ===============================
-// ✅ GET ALL MATCHES (with filter)
-// ===============================
 const getAllMatches = async (req, res) => {
 
   try {
@@ -189,10 +186,6 @@ const getAllMatches = async (req, res) => {
 };
 
 
-
-// ===============================
-// ✅ NEW: GET MATCHES BY LEAGUE
-// ===============================
 const getMatchesByLeague = async (req, res) => {
 
   try {
@@ -226,10 +219,6 @@ const getMatchesByLeague = async (req, res) => {
 };
 
 
-
-// ===============================
-// VOTE MATCH
-// ===============================
 const voteMatch = async (req, res) => {
 
   try {
