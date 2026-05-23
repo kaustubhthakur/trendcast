@@ -20,24 +20,25 @@ interface Match {
   vote_team_a: number;
   vote_draw: number;
   vote_team_b: number;
+  league?: "PL" | "LALIGA" | "UCL";
 }
-
-interface User {
-  id: number;
-  username: string;
-  email: string;
-  isAdmin: boolean;
-}
-
-
 
 type FilterType = "all" | "today" | "upcoming";
+type LeagueType = "ALL" | "PL" | "LALIGA" | "UCL";
+
+const LEAGUE_LABELS: Record<LeagueType, string> = {
+  ALL: "All Leagues",
+  PL: "Premier League",
+  LALIGA: "La Liga",
+  UCL: "UCL",
+};
 
 export default function MatchList() {
   const [matches, setMatches] = useState<Match[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<FilterType>("all");
+  const [league, setLeague] = useState<LeagueType>("ALL");
 
   useEffect(() => {
     const fetchMatches = async () => {
@@ -58,7 +59,8 @@ export default function MatchList() {
   }, []);
 
   const filteredMatches = matches.filter((m) => {
-    if (filter === "all") return true;
+    if (league !== "ALL" && m.league !== league) return false;
+
     const matchDate = new Date(m.match_time);
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -72,7 +74,10 @@ export default function MatchList() {
 
   const grouped = filteredMatches.reduce<Record<string, Match[]>>((acc, match) => {
     const date = new Date(match.match_time).toLocaleDateString("en-GB", {
-      weekday: "long", day: "numeric", month: "long", year: "numeric",
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
     });
     if (!acc[date]) acc[date] = [];
     acc[date].push(match);
@@ -81,23 +86,50 @@ export default function MatchList() {
 
   return (
     <section className={styles.section}>
-      <div className={styles.filterRow}>
-        {(["all", "today", "upcoming"] as FilterType[]).map((f) => (
-          <button
-            key={f}
-            className={`${styles.filterBtn} ${filter === f ? styles.filterActive : ""}`}
-            onClick={() => setFilter(f)}
-          >
-            {f.charAt(0).toUpperCase() + f.slice(1)}
-          </button>
-        ))}
+
+      <div className={styles.filtersBar}>
+        <div className={styles.filterGroup}>
+          <span className={styles.filterLabel}>Date</span>
+          <div className={styles.pillGroup}>
+            {(["all", "today", "upcoming"] as FilterType[]).map((f) => (
+              <button
+                key={f}
+                className={`${styles.pill} ${filter === f ? styles.pillActive : ""}`}
+                onClick={() => setFilter(f)}
+              >
+                {f === "all" ? "All" : f === "today" ? "Today" : "Upcoming"}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className={styles.divider} />
+
+        <div className={styles.filterGroup}>
+          <span className={styles.filterLabel}>League</span>
+          <div className={styles.pillGroup}>
+            {(["ALL", "PL", "LALIGA", "UCL"] as LeagueType[]).map((l) => (
+              <button
+                key={l}
+                className={`${styles.pill} ${league === l ? styles.pillActive : ""}`}
+                onClick={() => setLeague(l)}
+              >
+                {l === "ALL" ? "All" : l}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
       {loading && (
         <div className={styles.stateWrap}>
-          <div className={styles.spinnerRow}>
+          <div className={styles.skeletonGrid}>
             {[0, 1, 2].map((i) => (
-              <div key={i} className={styles.skeletonCard} style={{ animationDelay: `${i * 0.12}s` }} />
+              <div
+                key={i}
+                className={styles.skeletonCard}
+                style={{ animationDelay: `${i * 0.12}s` }}
+              />
             ))}
           </div>
         </div>
@@ -117,7 +149,12 @@ export default function MatchList() {
 
       {!loading && !error && Object.entries(grouped).map(([date, dayMatches]) => (
         <div key={date} className={styles.dateGroup}>
-          <h2 className={styles.dateHeading}>{date}</h2>
+          <div className={styles.dateHeadingRow}>
+            <h2 className={styles.dateHeading}>{date}</h2>
+            <span className={styles.matchCount}>
+              {dayMatches.length} {dayMatches.length === 1 ? "match" : "matches"}
+            </span>
+          </div>
           <div className={styles.grid}>
             {dayMatches.map((match) => (
               <MatchCard key={match.id} match={match} />

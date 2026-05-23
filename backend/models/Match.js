@@ -11,7 +11,8 @@ exports.CreateMatch = async ({
   predictedResult,
   teamAGoals,
   teamBGoals,
-  matchTime
+  matchTime,
+  league // ✅ ADDED
 }) => {
 
   const res = await pool.query(
@@ -28,20 +29,21 @@ exports.CreateMatch = async ({
       team_a_goals,
       team_b_goals,
       match_time,
+      league,
       vote_team_a,
       vote_draw,
       vote_team_b
     )
     VALUES (
-      $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,0,0,0
+      $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,0,0,0
     )
 
     ON CONFLICT (
       team_a_name,
       team_b_name,
-      match_time
+      match_time,
+      league
     )
-
     DO UPDATE SET
       team_a_logo = EXCLUDED.team_a_logo,
       team_b_logo = EXCLUDED.team_b_logo,
@@ -65,7 +67,8 @@ exports.CreateMatch = async ({
       predictedResult,
       teamAGoals,
       teamBGoals,
-      matchTime
+      matchTime,
+      league
     ]
   );
 
@@ -75,7 +78,8 @@ exports.CreateMatch = async ({
 exports.findExistingMatch = async ({
   teamAName,
   teamBName,
-  matchTime
+  matchTime,
+  league // ✅ ADDED
 }) => {
 
   const res = await pool.query(
@@ -86,12 +90,14 @@ exports.findExistingMatch = async ({
       team_a_name = $1
       AND team_b_name = $2
       AND match_time = $3
+      AND league = $4
     LIMIT 1
     `,
     [
       teamAName,
       teamBName,
-      matchTime
+      matchTime,
+      league
     ]
   );
 
@@ -120,9 +126,7 @@ exports.voteMatch = async ({
     );
 
     if (matchExists.rows.length === 0) {
-
       await client.query("ROLLBACK");
-
       return null;
     }
 
@@ -138,22 +142,15 @@ exports.voteMatch = async ({
 
     if (existingVote.rows.length > 0) {
 
-      const previousVote =
-        existingVote.rows[0].vote_type;
+      const previousVote = existingVote.rows[0].vote_type;
 
       if (previousVote !== voteType) {
 
         let oldColumn;
 
-        if (previousVote === "TEAM_A") {
-          oldColumn = "vote_team_a";
-        }
-        else if (previousVote === "DRAW") {
-          oldColumn = "vote_draw";
-        }
-        else {
-          oldColumn = "vote_team_b";
-        }
+        if (previousVote === "TEAM_A") oldColumn = "vote_team_a";
+        else if (previousVote === "DRAW") oldColumn = "vote_draw";
+        else oldColumn = "vote_team_b";
 
         await client.query(
           `
@@ -173,17 +170,13 @@ exports.voteMatch = async ({
           `,
           [voteType, userId, matchId]
         );
-      }
-      else {
 
+      } else {
         await client.query("ROLLBACK");
-
-        return {
-          alreadyVoted: true
-        };
+        return { alreadyVoted: true };
       }
-    }
-    else {
+
+    } else {
 
       await client.query(
         `
@@ -200,15 +193,9 @@ exports.voteMatch = async ({
 
     let column;
 
-    if (voteType === "TEAM_A") {
-      column = "vote_team_a";
-    }
-    else if (voteType === "DRAW") {
-      column = "vote_draw";
-    }
-    else {
-      column = "vote_team_b";
-    }
+    if (voteType === "TEAM_A") column = "vote_team_a";
+    else if (voteType === "DRAW") column = "vote_draw";
+    else column = "vote_team_b";
 
     const updatedMatch = await client.query(
       `
@@ -221,9 +208,7 @@ exports.voteMatch = async ({
     );
 
     if (updatedMatch.rows.length === 0) {
-
       await client.query("ROLLBACK");
-
       return null;
     }
 
@@ -232,13 +217,9 @@ exports.voteMatch = async ({
     return updatedMatch.rows[0];
 
   } catch (err) {
-
     await client.query("ROLLBACK");
-
     throw err;
-
   } finally {
-
     client.release();
   }
 };
@@ -251,6 +232,20 @@ exports.getAllMatches = async () => {
     FROM matches
     ORDER BY match_time ASC
     `
+  );
+
+  return res.rows;
+};
+exports.getMatchesByLeague = async (league) => {
+
+  const res = await pool.query(
+    `
+    SELECT *
+    FROM matches
+    WHERE league = $1
+    ORDER BY match_time ASC
+    `,
+    [league]
   );
 
   return res.rows;
