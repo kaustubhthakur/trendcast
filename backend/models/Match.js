@@ -12,7 +12,7 @@ exports.CreateMatch = async ({
   teamAGoals,
   teamBGoals,
   matchTime,
-  league // ✅ ADDED
+  league 
 }) => {
 
   const res = await pool.query(
@@ -79,7 +79,7 @@ exports.findExistingMatch = async ({
   teamAName,
   teamBName,
   matchTime,
-  league // ✅ ADDED
+  league
 }) => {
 
   const res = await pool.query(

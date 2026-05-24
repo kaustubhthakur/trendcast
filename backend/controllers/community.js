@@ -1,9 +1,4 @@
-
-
 const Community = require("../models/Community");
-
-
-
 
 exports.createPost = async (req, res) => {
 
