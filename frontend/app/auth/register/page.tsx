@@ -61,20 +61,12 @@ export default function RegisterPage() {
         </div>
         <div className={styles.decoGrid} />
       </div>
-
-      {/* Form Panel */}
       <div className={styles.panel}>
         <div className={styles.panelInner}>
           <Link href="/" className={styles.backLink}>← Back to home</Link>
 
-          <div className={styles.logoWrap}>
-            <span className={styles.logoMark}>⚽</span>
-            <span className={styles.logoText}>FootBuzz</span>
-          </div>
-
           <div className={styles.formSection}>
             <h1 className={styles.formTitle}>Create account</h1>
-            <p className={styles.formSubtitle}>Join thousands already on FootBuzz.</p>
 
             {error && (
               <div className={styles.errorBanner} role="alert">

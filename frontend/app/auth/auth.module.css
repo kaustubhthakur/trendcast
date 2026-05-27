@@ -1,8 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap');
 
-/* ════════════════════════════════
-   CSS VARIABLES
-════════════════════════════════ */
 :global(:root) {
   --ink:          #1a1a2e;
   --ink-light:    #2d2d4a;
@@ -24,9 +21,6 @@
   --transition:    0.2s ease;
 }
 
-/* ════════════════════════════════
-   BASE RESET (global — CSS Modules safe)
-════════════════════════════════ */
 :global(*),
 :global(*::before),
 :global(*::after) {
@@ -46,9 +40,6 @@
   color: var(--ink);
 }
 
-/* ════════════════════════════════
-   PAGE LAYOUT
-════════════════════════════════ */
 .page {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -63,9 +54,6 @@
   direction: ltr;
 }
 
-/* ════════════════════════════════
-   FORM PANEL
-════════════════════════════════ */
 .panel {
   display: flex;
   flex-direction: column;
@@ -159,9 +147,6 @@
   font-weight: 400;
 }
 
-/* ════════════════════════════════
-   BANNERS
-════════════════════════════════ */
 .errorBanner {
   display: flex;
   align-items: center;
@@ -197,9 +182,6 @@
   animation: fadeIn 0.3s ease;
 }
 
-/* ════════════════════════════════
-   FORM ELEMENTS
-════════════════════════════════ */
 .form {
   display: flex;
   flex-direction: column;
@@ -315,11 +297,7 @@
   transition: color 0.3s ease;
 }
 
-/* ════════════════════════════════
-   BUTTONS
-════════════════════════════════ */
 
-/* ── Primary Submit ── */
 .submitBtn {
   width: 100%;
   padding: 0.9rem 1.5rem;
@@ -408,7 +386,6 @@
   box-shadow: var(--shadow-sm);
 }
 
-/* ── Spinner ── */
 .spinner {
   width: 18px;
   height: 18px;
@@ -418,9 +395,6 @@
   animation: spin 0.7s linear infinite;
 }
 
-/* ════════════════════════════════
-   DIVIDER
-════════════════════════════════ */
 .divider {
   display: flex;
   align-items: center;
@@ -441,9 +415,6 @@
   white-space: nowrap;
 }
 
-/* ════════════════════════════════
-   SWITCH LINK
-════════════════════════════════ */
 .switchText {
   text-align: center;
   font-size: 0.83rem;
@@ -463,9 +434,7 @@
   text-decoration: underline;
 }
 
-/* ════════════════════════════════
-   DECO PANEL
-════════════════════════════════ */
+
 .deco {
   background: var(--ink);
   position: relative;
@@ -629,9 +598,6 @@
   font-weight: 500;
 }
 
-/* ════════════════════════════════
-   KEYFRAMES
-════════════════════════════════ */
 @keyframes fadeUp {
   from {
     opacity: 0;
@@ -657,9 +623,6 @@
   to { transform: rotate(360deg); }
 }
 
-/* ════════════════════════════════
-   RESPONSIVE
-════════════════════════════════ */
 @media (max-width: 768px) {
   .page,
   .pageReverse {

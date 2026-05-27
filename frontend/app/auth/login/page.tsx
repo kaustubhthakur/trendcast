@@ -42,11 +42,6 @@ export default function LoginPage() {
         <div className={styles.panelInner}>
           <Link href="/" className={styles.backLink}>← Back to home</Link>
 
-          <div className={styles.logoWrap}>
-            <span className={styles.logoMark}>⚽</span>
-            <span className={styles.logoText}>FootBuzz</span>
-          </div>
-
           <div className={styles.formSection}>
             <h1 className={styles.formTitle}>Welcome back</h1>
             <p className={styles.formSubtitle}>Sign in to continue your journey.</p>

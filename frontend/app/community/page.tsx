@@ -166,7 +166,7 @@ function PostCard({
       credentials: "include",
     });
     const data = await res.json();
-    if (data.alreadyLiked) return; // backend returns alreadyLiked if duplicate
+    if (data.alreadyLiked) return; 
     if (res.ok) {
       setLiked(true);
       setLikeCount((n) => n + 1);
@@ -239,7 +239,6 @@ function PostCard({
   );
 }
 
-/* ── Create post ───────────────────────────────────────── */
 function CreatePost({
   username,
   onCreated,
@@ -350,7 +349,6 @@ function CreatePost({
   );
 }
 
-/* ── Trending sidebar ──────────────────────────────────── */
 function TrendingSidebar() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
@@ -390,20 +388,10 @@ function TrendingSidebar() {
           ))}
         </div>
       )}
-      <div className={styles.sidebarCard}>
-        <div className={styles.sidebarCardTitle}>Community Rules</div>
-        <ul className={styles.ruleList}>
-          <li>Keep it respectful</li>
-          <li>No spam or self-promotion</li>
-          <li>Predictions must be honest</li>
-          <li>Enjoy the beautiful game</li>
-        </ul>
-      </div>
     </aside>
   );
 }
 
-/* ── Main page ─────────────────────────────────────────── */
 type FeedView = "all" | "match" | "trending";
 
 export default function CommunityPage() {
@@ -453,7 +441,6 @@ export default function CommunityPage() {
               Predictions, reactions, and live talk from the FootBuzz fanbase
             </p>
           </div>
-          {/* Redirect button to matches/dashboard */}
           <Link href="/" className={styles.redirectBtn}>
             ← Back to Matches
           </Link>

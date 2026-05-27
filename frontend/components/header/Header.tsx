@@ -46,15 +46,13 @@ export default function Header() {
 
         <nav className={styles.nav}>
           <Link href="/" className={styles.navLink}>Home</Link>
-          <Link href="#dashboard" className={styles.navLink}>Dashboard</Link>
+          <Link href="/dashboard" className={styles.navLink}>Dashboard</Link>
           <Link href="/community" className={styles.navLink}>Community</Link>
-          <Link href="#about" className={styles.navLink}>About</Link>
         </nav>
 
         <div className={styles.actions}>
           {user ? (
             <>
-              {/* Avatar links to /profile */}
               <Link href="/profile" className={styles.userGreeting}>
                 <span className={styles.userAvatar}>{initials}</span>
                 {user.username}
@@ -88,7 +86,6 @@ export default function Header() {
         <Link href="/" className={styles.drawerLink} onClick={() => setMenuOpen(false)}>Home</Link>
         <Link href="#features" className={styles.drawerLink} onClick={() => setMenuOpen(false)}>Features</Link>
         <Link href="/community" className={styles.drawerLink} onClick={() => setMenuOpen(false)}>Community</Link>
-        <Link href="#about" className={styles.drawerLink} onClick={() => setMenuOpen(false)}>About</Link>
         <div className={styles.drawerDivider} />
         {user ? (
           <>
