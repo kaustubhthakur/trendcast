@@ -43,7 +43,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const res = await fetch(`${API_BASE}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      credentials: "include", // sends/receives cookies
+      credentials: "include", 
       body: JSON.stringify({ email, password }),
     });
 

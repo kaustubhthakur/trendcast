@@ -102,6 +102,3 @@ away_goals_model.fit(
     X_scaled,
     away_goals
 )
-
-print("\n✅ Models trained successfully")
-print(f"Total samples: {len(X)}")

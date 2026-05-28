@@ -1,7 +1,5 @@
 const pool = require("../db");
 
-
-
 exports.createPost = async ({ userId, username, content, imageUrl, videoUrl, matchId, playerPrediction, playerProbability }) => {
   const res = await pool.query(
     `INSERT INTO community_posts (user_id, username, content, image_url, video_url, match_id, player_prediction, player_probability)
